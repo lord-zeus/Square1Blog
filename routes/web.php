@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,5 +28,12 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/dashboard/posts', function () {
+    return Inertia::render('Posts', ['posts'=> \App\Models\Post::with(['user'])->paginate(20)]);
+})->middleware(['auth', 'verified'])->name('posts');
+
+Route::post('/dashboard/posts', [PostController::class, 'store'])->middleware(['auth', 'verified'])->name('posts');
+
 
 require __DIR__.'/auth.php';
