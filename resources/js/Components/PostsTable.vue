@@ -8,6 +8,10 @@ defineProps({
     previousPage: String
 
 })
+
+function makeDate(value){
+    return new Date(value).toString()
+}
 </script>
 
 <template>
@@ -17,7 +21,7 @@ defineProps({
                 <div class="p-8 bg-white rounded shadow-md">
                     <h2 class="text-2xl font-bold text-gray-800">{{ post.title.slice(0, 20) }}</h2>
                     <div class="flex justify-between">
-                        <span class="text-sm text-gray-500">{{post.purchased_at }}</span>
+                        <span class="text-sm text-gray-500">{{makeDate(post.created_at) }}</span>
                         <span class="inline-flex text-gray-500"><svg xmlns="http://www.w3.org/2000/svg"
                                                                      class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -30,10 +30,14 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard/posts', function () {
-    return Inertia::render('Posts', ['posts'=> \App\Models\Post::with(['user'])->paginate(20)]);
+    return Inertia::render('Posts', ['posts'=> \App\Models\Post::with(['user'])->orderByDesc('created_at')->paginate(20)]);
 })->middleware(['auth', 'verified'])->name('posts');
 
-Route::post('/dashboard/posts', [PostController::class, 'store'])->middleware(['auth', 'verified'])->name('posts');
+Route::get('/dashboard/posts/create', function () {
+    return Inertia::render('CreatePost');
+})->middleware(['auth', 'verified'])->name('createPost');
+
+Route::post('/dashboard/posts', [PostController::class, 'store'])->middleware(['auth', 'verified'])->name('storePost');
 
 
 require __DIR__.'/auth.php';

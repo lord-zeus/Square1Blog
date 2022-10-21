@@ -17,6 +17,7 @@ defineProps({
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Posts
             </h2>
+            <h3 class="absolute right-10 top-20"><a  :href="route('createPost')"> Create Post</a></h3>
         </template>
 
         <div class="py-12">
