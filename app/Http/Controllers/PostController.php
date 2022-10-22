@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Traits\PostTrait;
 use Carbon\Carbon;
+use Illuminate\Database\Concerns\ExplainsQueries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PostController extends Controller
@@ -17,8 +19,7 @@ class PostController extends Controller
     }
 
     public function showPost($page_number){
-        return $posts =  Post::with(['user'])->orderByDesc('created_at')->paginate(20);
-        return Inertia::render('Posts', ['posts' => $posts]);
+        return $posts = Post::with(['user'])->orderByDesc('created_at')->paginate(20, ['*'], '', $page_number);
     }
 
     public function getPost(Request $request){
