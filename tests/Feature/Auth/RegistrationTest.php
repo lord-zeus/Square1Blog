@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -28,5 +30,17 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
+    }
+
+    public function test_user_cannot_create_account_with_name_admin(){
+        User::factory()->create();
+        $response = $this->post('/register', [
+            'name' => 'admin',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+        Log::debug(json_encode($response->exception->status));
+        $this->assertEquals(422, $response->exception->status);
     }
 }

@@ -26,14 +26,14 @@ class PostFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Post Should not have a title.
      *
      * @return static
      */
-    public function unverified()
+    public function nullTitle()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+        return $this->state([
+            'title' => null,
         ]);
     }
 }

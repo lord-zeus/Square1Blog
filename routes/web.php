@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +30,13 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard/posts', function () {
+
+Route::get('/posts', function () {
     return Inertia::render('Posts', ['posts'=> \App\Models\Post::with(['user'])->orderByDesc('created_at')->paginate(20)]);
+})->name('allPost');
+
+Route::get('/dashboard/posts', function () {
+    return Inertia::render('Posts', ['posts'=> \App\Models\Post::with(['user'])->where('user_id', Auth::id())->orderByDesc('created_at')->paginate(20)]);
 })->middleware(['auth', 'verified'])->name('posts');
 
 Route::get('/dashboard/posts/create', function () {

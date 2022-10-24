@@ -14,23 +14,23 @@ use Inertia\Inertia;
 class PostController extends Controller
 {
     use PostTrait;
-    public function index(){
-        return Post::all();
-    }
+//    public function index(){
+//        return Post::all();
+//    }
 
-    public function showPost($page_number){
-        return $posts = Post::with(['user'])->orderByDesc('created_at')->paginate(20, ['*'], '', $page_number);
+    public function show($page_number){
+        return $this->showPost($page_number);
     }
 
     public function getPost(Request $request){
-        return $this->getThirdPost();
+        return $this->getThirdPost(env('POST_URL'));
     }
 
 
     public function store(Request $request){
         $request->merge(['user_id' => Auth::id(), 'published_at' => Carbon::now()]);
         $this->storePost($request);
-        $posts = $this->showPost(1);
+        $posts = $this->showUserPost(1);
         return Inertia::render('Posts', ['posts' => $posts]);
     }
 }
