@@ -35,3 +35,18 @@ php artisan queue:work --tries=1
 # Run Schedular
 php artisan schedule:work
 
+# Run Application
+php artisan serve
+
+```
+
+> **Testing:**
+>
+
+#### Run Test
+
+```bash
+# Test Command
+php artisan test
+
+```
