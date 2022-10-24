@@ -11,9 +11,7 @@ import { Link } from '@inertiajs/inertia-vue3';
         </div>
     </div>
 
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-        <div class="">
-            <slot />
-        </div>
+    <div class="">
+        <slot />
     </div>
 </template>
