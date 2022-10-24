@@ -1,11 +1,13 @@
 <?php
 namespace App\Traits;
 
+use App\Jobs\PostCacheJob;
 use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +17,8 @@ use Illuminate\Support\Facades\Validator;
 
 trait PostTrait {
 
-    public function storePost(Request $request){
+    public function storePost(Request $request): string
+    {
 
         $request->validate([
             'title' => 'required',
@@ -23,14 +26,18 @@ trait PostTrait {
             'published_at' => 'required',
             'user_id' => 'required'
         ]);
-        return Post::create($request->all());
+        PostCacheJob::dispatch($request->all());
+        return 'ok';
+//        return Post::create($request->all());
     }
 
-    public function showPost(){
-        return Post::with(['user'])->orderByDesc('created_at')->paginate();
+    public function showPost(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return Post::with(['user'])->orderByDesc('published_at')->paginate();
     }
 
-    public function showUserPost(){
+    public function showUserPost(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
         $auth_id = Auth::id();
         $page_number = request()->query('page');
         if($page_number == 1 || empty($page_number)){
@@ -49,7 +56,8 @@ trait PostTrait {
     /**
      * @throws \Exception
      */
-    public function getThirdPost($url){
+    public function getThirdPost(string $url): Response|\Illuminate\Http\JsonResponse|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
         try{
             $response = Http::get($url);
         }catch (\Exception $e){

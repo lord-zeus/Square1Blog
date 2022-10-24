@@ -2,13 +2,14 @@
 
 namespace App\Console;
 
+use App\Traits\APIResponse;
 use App\Traits\PostTrait;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    use PostTrait;
+    use PostTrait, APIResponse;
     /**
      * Define the application's command schedule.
      *
@@ -21,7 +22,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $url = env('POST_URL');
             $this->getThirdPost($url);
-        })->everyFiveMinutes();
+        })->hourly();
 
     }
 

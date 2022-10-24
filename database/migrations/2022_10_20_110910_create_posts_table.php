@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('description');
             $table->dateTime('published_at');
             $table->index('published_at');
+            $table->index('user_id');
             $table->timestamps();
         });
     }

@@ -35,7 +35,7 @@ class PostTest extends TestCase
         User::factory()->create();
         Post::factory(50)->create();
 
-        $post = $this->showPost(1);
+        $post = $this->showPost();
 
         $this->assertNotEmpty($post);
 
@@ -60,8 +60,8 @@ class PostTest extends TestCase
     }
 
     public function test_get_post_from_other_server_and_store(){
-        $posts = $this->getThirdPost(env('POST_URL'));
-        $this->assertEquals('ok', $posts);
+        $response  = $this->getThirdPost(env('POST_URL'));
+        $this->assertJson(json_encode(['data' => 'ok', 'code' => '200']), $response);
     }
 
     public function test_get_proper_exception_if_request_fails(){
