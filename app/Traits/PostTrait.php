@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -24,12 +26,24 @@ trait PostTrait {
         return Post::create($request->all());
     }
 
-    public function showPost($page_number){
-        return $posts = Post::with(['user'])->orderByDesc('created_at')->paginate(20, ['*'], '', $page_number);
+    public function showPost(){
+        return Post::with(['user'])->orderByDesc('created_at')->paginate();
     }
 
-    public function showUserPost($page_number){
-        return Post::with(['user'])->where('user_id', Auth::id())->orderByDesc('published_at')->paginate(20, ['*'], '', $page_number);
+    public function showUserPost(){
+        $auth_id = Auth::id();
+        $page_number = request()->query('page');
+        if($page_number == 1 || empty($page_number)){
+            return Cache::get('posts_'.$auth_id, function () {
+                $user_id = Auth::id();
+                $all_posts = Post::with(['user'])->where('user_id', $user_id)->orderByDesc('published_at')->paginate();
+                Cache::put('posts_'.$user_id, $all_posts);
+                return $all_posts;
+            });
+        }
+        else{
+            return Post::with(['user'])->where('user_id', $auth_id)->orderByDesc('published_at')->paginate();
+        }
     }
 
     /**
@@ -53,7 +67,7 @@ trait PostTrait {
         if(empty($user)){
             $user = User::factory()->create();
         }
-
+        $valid_data = [];
         foreach ($value->articles as $post){
 //            $article = Post::where('title', $post->title)->first();
 //            if(!empty($article)){
@@ -74,10 +88,11 @@ trait PostTrait {
                 Log::debug("Error: " . json_encode(['status' => '422', 'body' => $validation->errors(), 'data' => $request->all(), 'url' =>$url]));
             }
             else {
-               $this->storePost($request);
+                array_push($valid_data, $request->all());
             }
 
         }
+        Post::insert($valid_data);
         return $this->successResponse('ok');
     }
 }

@@ -31,13 +31,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::get('/posts', function () {
-    return Inertia::render('Posts', ['posts'=> \App\Models\Post::with(['user'])->orderByDesc('created_at')->paginate(20)]);
-})->name('allPost');
+Route::get('/posts', [PostController::class, 'show'])->name('allPost');
 
-Route::get('/dashboard/posts', function () {
-    return Inertia::render('Posts', ['posts'=> \App\Models\Post::with(['user'])->where('user_id', Auth::id())->orderByDesc('created_at')->paginate(20)]);
-})->middleware(['auth', 'verified'])->name('posts');
+Route::get('/dashboard/posts', [PostController::class, 'showAuthPost'])->middleware(['auth', 'verified'])->name('posts');
 
 Route::get('/dashboard/posts/create', function () {
     return Inertia::render('CreatePost');
